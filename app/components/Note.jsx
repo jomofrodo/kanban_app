@@ -8,6 +8,7 @@ export default class Note extends React.Component {
       editing: false
     };
   }
+  
   render() {
     if(this.state.editing) {
       return this.renderEdit();
@@ -52,6 +53,8 @@ export default class Note extends React.Component {
       this.finishEdit(e);
     }
   };
+  
+  
   finishEdit = (e) => {
     const value = e.target.value;
 
