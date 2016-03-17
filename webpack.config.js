@@ -13,14 +13,19 @@ process.env.BABEL_ENV = TARGET;
 
 const common = {
   entry: {
-    app: PATHS.app
+    app: "./app",
+    react: ["react", "alt"],
+    vendor: ["jquery"]
   },
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
   output: {
     path: PATHS.build,
-    filename: 'bundle.js'
+    filename: '[name].js',
+    chunkFileName: '[name].js',
+    publicPath: "/"  + PATHS.build,
+    sourceMapFile: '[file].map'
   },
   module: {
     loaders: [
@@ -31,11 +36,16 @@ const common = {
       },
       {
         test: /\.jsx?$/,
-        loaders: ['babel?cacheDirectory'],
+        loaders: ['babel-loader?cacheDirectory'],
         include: PATHS.app
       }
     ]
-  }
+  },
+   plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new NpmInstallPlugin({   save: true  }),
+      new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"react", /* filename= */"react.bundle.js")
+       ]
 };
 
 if(TARGET === 'start' || !TARGET) {
@@ -56,13 +66,8 @@ if(TARGET === 'start' || !TARGET) {
       // to customize
       host: process.env.HOST,
       port: process.env.PORT
-    },
-    plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new NpmInstallPlugin({
-        save: true // --save
-      })
-    ]
+    }
+
   });
 }
 
