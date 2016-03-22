@@ -18,7 +18,7 @@ export default class Note extends React.Component {
      return this.renderNote();
     }
   }
-  renderEdit = () => {
+  renderEdit = () => {		
     return <input type="text"
       ref={
         (e) => e ? e.selectionStart = this.props.task.length : null

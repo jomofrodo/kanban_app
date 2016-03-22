@@ -3,7 +3,8 @@ const merge = require('webpack-merge');
 const webpack = require('webpack');
 const NpmInstallPlugin = require('npm-install-webpack-plugin');
 
-const TARGET = process.env.npm_lifecycle_event;
+const TARGET = process.env.npm_lifecycle_event?process.env.npm_lifecycle_event:'build';
+
 const PATHS = {
   app: path.join(__dirname, 'app'),
   build: path.join(__dirname, 'build')
@@ -13,20 +14,24 @@ process.env.BABEL_ENV = TARGET;
 
 const common = {
   entry: {
-    app: "./app",
-    react: ["react", "alt"],
-    vendor: ["jquery"]
+    app: './app/index.jsx',
+    vendor: [
+             'react',
+             'react-dom',
+             'alt',
+             'node-uuid'
+             ]
   },
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
   output: {
     path: PATHS.build,
-    filename: '[name].js',
-    chunkFileName: '[name].js',
-    publicPath: "/"  + PATHS.build,
-    sourceMapFile: '[file].map'
+    filename: 'kanban.js'
   },
+  plugins: [
+            new webpack.optimize.CommonsChunkPlugin('vendor','vendor.bundle.js')
+            ],
   module: {
     loaders: [
       {
@@ -34,18 +39,10 @@ const common = {
         loaders: ['style', 'css'],
         include: PATHS.app
       },
-      {
-        test: /\.jsx?$/,
-        loaders: ['babel-loader?cacheDirectory'],
-        include: PATHS.app
-      }
+      {test: /\.jsx?$/,  loaders: ['babel?cacheDirectory'], include: PATHS.app}
+      //{ test: /\.jsx?$/, loader: 'eslint', exclude: /node_modules/}
     ]
-  },
-   plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new NpmInstallPlugin({   save: true  }),
-      new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"react", /* filename= */"react.bundle.js")
-       ]
+  }
 };
 
 if(TARGET === 'start' || !TARGET) {
@@ -66,8 +63,13 @@ if(TARGET === 'start' || !TARGET) {
       // to customize
       host: process.env.HOST,
       port: process.env.PORT
-    }
-
+    },
+    plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new NpmInstallPlugin({
+        save: true // --save
+      })
+    ]
   });
 }
 
