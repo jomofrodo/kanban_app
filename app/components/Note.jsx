@@ -8,17 +8,14 @@ export default class Note extends React.Component {
       editing: false
     };
   }
-  
   render() {
     if(this.state.editing) {
       return this.renderEdit();
     }
 
-    else {
-     return this.renderNote();
-    }
+    return this.renderNote();
   }
-  renderEdit = () => {		
+  renderEdit = () => {
     return <input type="text"
       ref={
         (e) => e ? e.selectionStart = this.props.task.length : null
@@ -53,8 +50,6 @@ export default class Note extends React.Component {
       this.finishEdit(e);
     }
   };
-  
-  
   finishEdit = (e) => {
     const value = e.target.value;
 
