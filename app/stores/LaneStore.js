@@ -3,46 +3,76 @@ import alt from '../libs/alt';
 import LaneActions from '../actions/LaneActions';
 
 class LaneStore {
-	constructor() {
-		this.bindActions(LaneActions);
+    constructor() {
+	this.bindActions(LaneActions);
 
-		this.lanes = [];
-	}
-	create(lane) {
-		const lanes = this.lanes;
+	this.lanes = [];
+    }
+    create(lane) {
+	const lanes = this.lanes;
 
-		lane.id = uuid.v4();
+	lane.id = uuid.v4();
 
-		this.setState({
-			lanes: lanes.concat(lane)
-		});
+	this.setState({
+	    lanes: lanes.concat(lane)
+	});
 
-	}
-	update(updatedLane) {
-		const newLanes = this.lanes.map(lane => {
-			if(lane.id === updatedLane.id) {
-				// Object.assign is used to patch the lane data here. It
-				// mutates target (first parameter). In order to avoid that,
-				// I use {} as its target and apply data on it.
-				//
-				// Example: {}, {a: 5, b: 3}, {a: 17} -> {a: 17, b: 3}
-				//
-				// You can pass as many objects to the method as you want.
-				return Object.assign({}, lane, updatedLane);
-			}
+    }
+    update(updatedLane) {
+	const newLanes = this.lanes.map(lane => {
+	    if(lane.id === updatedLane.id) {
+		// Object.assign is used to patch the lane data here. It
+		// mutates target (first parameter). In order to avoid that,
+		// I use {} as its target and apply data on it.
+		//
+		// Example: {}, {a: 5, b: 3}, {a: 17} -> {a: 17, b: 3}
+		//
+		// You can pass as many objects to the method as you want.
+		return Object.assign({}, lane, updatedLane);
+	    }
 
-			return lane;
-		});
+	    return lane;
+	});
 
-		// This is same as `this.setState({lanes: lanes})`
-		this.setState({lanes:newLanes});
+	// This is same as `this.setState({lanes: lanes})`
+	this.setState({lanes:newLanes});
 
-	}
-	delete(id) {
-		this.setState({
-			lanes: this.lanes.filter(lane => lane.id !== id)
-		});
-	}
+    }
+    delete(id) {
+	this.setState({
+	    lanes: this.lanes.filter(lane => lane.id !== id)
+	});
+    }
+
+    attachToLane({laneId, noteId}) {
+	const lanes = this.lanes.map(lane => {
+	    if(lane.id === laneId) {
+		if(lane.notes.includes(noteId)) {
+		    console.warn('Already attached note to lane', lanes);
+		}
+		else {
+		    lane.notes.push(noteId);
+		}
+	    }
+
+	    return lane;
+	});
+
+	this.setState({lanes});
+    }
+    detachFromLane({laneId, noteId}) {
+	const lanes = this.lanes.map(lane => {
+	    if(lane.id === laneId) {
+		lane.notes = lane.notes.filter(note => note !== noteId);
+	    }
+
+	    return lane;
+	});
+
+	this.setState({lanes});
+    }
+
 }
+
 
 export default alt.createStore(LaneStore, 'LaneStore');
