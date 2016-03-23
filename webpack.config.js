@@ -3,8 +3,7 @@ const merge = require('webpack-merge');
 const webpack = require('webpack');
 const NpmInstallPlugin = require('npm-install-webpack-plugin');
 
-const TARGET = process.env.npm_lifecycle_event?process.env.npm_lifecycle_event:'build';
-
+const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
   app: path.join(__dirname, 'app'),
   build: path.join(__dirname, 'build')
@@ -14,24 +13,15 @@ process.env.BABEL_ENV = TARGET;
 
 const common = {
   entry: {
-    app: './app/index.jsx',
-    vendor: [
-             'react',
-             'react-dom',
-             'alt',
-             'node-uuid'
-             ]
+    app: PATHS.app
   },
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
   output: {
     path: PATHS.build,
-    filename: 'kanban.js'
+    filename: 'bundle.js'
   },
-  plugins: [
-            new webpack.optimize.CommonsChunkPlugin('vendor','vendor.bundle.js')
-            ],
   module: {
     loaders: [
       {
@@ -39,8 +29,11 @@ const common = {
         loaders: ['style', 'css'],
         include: PATHS.app
       },
-      {test: /\.jsx?$/,  loaders: ['babel?cacheDirectory'], include: PATHS.app}
-      //{ test: /\.jsx?$/, loader: 'eslint', exclude: /node_modules/}
+      {
+        test: /\.jsx?$/,
+        loaders: ['babel?cacheDirectory'],
+        include: PATHS.app
+      }
     ]
   }
 };
