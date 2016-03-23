@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default class Editable extends React.Component {
-   render() {
+  render() {
     const {value, onEdit, onValueClick, editing, ...props} = this.props;
 
     return (
@@ -10,7 +10,7 @@ export default class Editable extends React.Component {
       </div>
     );
   }
-  renderEdit = () => {		
+  renderEdit = () => {
     return <input type="text"
       ref={
         (e) => e ? e.selectionStart = this.props.value.length : null
@@ -19,11 +19,6 @@ export default class Editable extends React.Component {
       defaultValue={this.props.value}
       onBlur={this.finishEdit}
       onKeyPress={this.checkEnter} />;
-  };
-  renderDelete = () => {
-    return <button
-      className="delete"
-      onClick={this.props.onDelete}>x</button>;
   };
   renderValue = () => {
     const onDelete = this.props.onDelete;
@@ -35,20 +30,21 @@ export default class Editable extends React.Component {
       </div>
     );
   };
-
+  renderDelete = () => {
+    return <button
+      className="delete"
+      onClick={this.props.onDelete}>x</button>;
+  };
   checkEnter = (e) => {
     if(e.key === 'Enter') {
       this.finishEdit(e);
     }
   };
-  
-  
   finishEdit = (e) => {
     const value = e.target.value;
 
     if(this.props.onEdit) {
       this.props.onEdit(value);
-
     }
   };
 }
